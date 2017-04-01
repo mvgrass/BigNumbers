@@ -1038,6 +1038,11 @@ void MainWindow::on_PolButton_clicked()
     ButtonsList.append(mod);
     ui->verticalLayout_3->addWidget(mod);
 
+    QPushButton* nod = new QPushButton(this);
+    nod->setText("НОД");
+    ButtonsList.append(nod);
+    ui->verticalLayout_3->addWidget(nod);
+
     QPushButton* NMRa = new QPushButton(this);
     NMRa->setText("Кратные корни A\n в простые");
     ButtonsList.append(NMRa);
@@ -1066,6 +1071,8 @@ void MainWindow::on_PolButton_clicked()
     div->show();
 
     mod->show();
+
+    nod->show();
 
     NMRa->show();
 
@@ -1126,6 +1133,7 @@ void MainWindow::on_PolButton_clicked()
     drawAnimation(multiply);
     drawAnimation(div);
     drawAnimation(mod);
+    drawAnimation(nod);
     drawAnimation(NMRa);
     drawAnimation(NMRb);
 
@@ -1769,6 +1777,100 @@ void MainWindow::on_PolButton_clicked()
             printIncorrect();
     });
 
+
+    connect(nod,&QPushButton::clicked,[=](){
+        bool flagA = true;
+        bool flagB = true;
+
+        std::map<Natural,Rational,Comparator> PolinomA;
+        std::map<Natural,Rational,Comparator> PolinomB;
+
+        for(int i = 0;i<LineEditsListA.size();i++){
+            QString ANum = this->EditsListA[2*i]->toPlainText();
+            ANum.replace("\n","");
+
+            QString ADenum = this->EditsListA[2*i+1]->toPlainText();
+            ADenum.replace("\n","");
+
+            QString ADegree = this->LineEditsListA[i]->text();
+            ADegree.replace("\n","");
+
+            bool f1 = validation(ANum);
+            bool f2 = validation(ADenum);
+            bool f3 = validation(ADegree);
+
+            ANum = BoxesListA[i]->currentText()+ANum;
+
+            flagA = f1&&f2&&f3;
+
+            if(flagA){
+                Natural* Deg = new Natural(std::string(ADegree.toLocal8Bit().constData()));
+                Integer num = Integer(std::string(ANum.toLocal8Bit().constData()));
+                Natural denum = Natural(std::string(ADenum.toLocal8Bit().constData()));
+                Rational *Coeff = new Rational(num,denum);
+
+                if(denum.NZER_N_B())
+                    PolinomA[*Deg] = PolinomA[*Deg].ADD_QQ_Q(*Coeff);
+                else
+                    flagA = false;
+
+                delete Deg;
+                delete Coeff;
+            }else
+                break;
+        }
+
+        for(int i = 0;i<LineEditsListB.size();i++){
+            QString BNum = this->EditsListB[2*i]->toPlainText();
+            BNum.replace("\n","");
+
+            QString BDenum = this->EditsListB[2*i+1]->toPlainText();
+            BDenum.replace("\n","");
+
+            QString BDegree = this->LineEditsListB[i]->text();
+            BDegree.replace("\n","");
+
+            bool f1 = validation(BNum);
+            bool f2 = validation(BDenum);
+            bool f3 = validation(BDegree);
+
+            BNum = BoxesListB[i]->currentText()+BNum;
+
+            flagB = f1&&f2&&f3;
+
+            if(flagB){
+                Natural* Deg = new Natural(std::string(BDegree.toLocal8Bit().constData()));
+                Integer num = Integer(std::string(BNum.toLocal8Bit().constData()));
+                Natural denum = Natural(std::string(BDenum.toLocal8Bit().constData()));
+                Rational *Coeff = new Rational(num,denum);
+
+                if(denum.NZER_N_B())
+                    PolinomB[*Deg] = PolinomB[*Deg].ADD_QQ_Q(*Coeff);
+
+                else
+                    flagB = false;
+
+                delete Deg;
+                delete Coeff;
+            }else
+                break;
+        }
+
+        if(flagA&&flagB){
+            Polinom* a = new Polinom(PolinomA);
+            Polinom* b = new Polinom(PolinomB);
+            if(!b->DEG_P_N().COM_NN_D(Natural("0"))==0||!b->get_C()[Natural("0")].get_NUM()->POZ_Z_D()==0){
+                Polinom *c = new Polinom(a->GCF_PP_P(*b));
+
+                printPolinom(*c);
+                delete c;
+            }else
+                printIncorrect();
+            delete a;
+            delete b;
+        }else
+            printIncorrect();
+    });
 
     connect(NMRa,&QPushButton::clicked,[=](){
         bool flagA = true;
