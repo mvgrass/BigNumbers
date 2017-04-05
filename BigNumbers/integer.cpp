@@ -123,9 +123,12 @@ int Integer::POZ_Z_D() const
 Integer &Integer::MUL_ZM_Z() const
 {
     //Вызываем конструктор с нашим массивом разрядов, номером старшего разряда и противоположным знаком
+    if(this->POZ_Z_D()!=0){
     Integer* opposite = new Integer(this->Arr,this->n,!this->sign);
 
     return *opposite;
+    }else
+        return *(new Integer(*this));
 }
 
 
@@ -224,7 +227,7 @@ Integer &Integer::MUL_ZZ_Z(const Integer &other) const
 
 
 /*****************************************************************/
-/*****************Деление цлеого на натуральное*******************/
+/*****************Деление целого на натуральное*******************/
 Integer &Integer::DIV_ZZ_Z(const Natural &other) const
 {
     Natural cur = Natural(this->ABS_Z_N());

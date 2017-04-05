@@ -510,10 +510,15 @@ void MainWindow::on_IntButton_clicked()
                 printInteger(*c,*this->EditsList[2]);
 
                 delete c;
-            }else if(sign == 0)
-                this->EditsList[2]->setText("Деление на 0 невозможно");
+            }else if(sign == 1){
+                Integer* c = new Integer(a->DIV_ZZ_Z(b->ABS_Z_N()).MUL_ZM_Z());
+
+                printInteger(*c,*this->EditsList[2]);
+
+                delete c;
+            }
             else
-                this->EditsList[2]->setText("Число \"B\" должно быть натуральным");
+               this->EditsList[2]->setText("Деление на 0 невозможно");
 
             delete a;
             delete b;
@@ -545,10 +550,15 @@ void MainWindow::on_IntButton_clicked()
                 printInteger(*c,*this->EditsList[2]);
 
                 delete c;
-            }else if(sign == 0)
-                this->EditsList[2]->setText("Деление на 0 невозможно");
+            }else if(sign == 1){
+                Integer* c = new Integer(a->MOD_ZZ_Z(b->TRANS_Z_N()));
+
+                printInteger(*c,*this->EditsList[2]);
+
+                delete c;
+            }
             else
-                this->EditsList[2]->setText("Число \"B\" должно быть натуральным");
+                this->EditsList[2]->setText("Деление на 0 невозможно");
 
             delete a;
             delete b;
